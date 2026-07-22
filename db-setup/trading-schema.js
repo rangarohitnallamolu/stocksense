@@ -82,7 +82,7 @@ CREATE TABLE IF NOT EXISTS open_positions (
   opened_at         TIMESTAMP DEFAULT NOW(),
   session_date      DATE DEFAULT CURRENT_DATE,
   paper_trade       BOOLEAN DEFAULT true,
-  robinhood_order_id VARCHAR(100)
+  broker_order_id VARCHAR(100)
 );
 
 -- Full trade history

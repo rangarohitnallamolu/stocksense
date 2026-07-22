@@ -1,6 +1,6 @@
 # StockSense
 
-A Robinhood-style stock analysis and paper-trading platform — real portfolio tracking, watchlists,
+A stock analysis and paper-trading platform — real portfolio tracking, watchlists,
 alerts, and a multi-agent AI pipeline that researches, debates, and executes simulated trades.
 
 **Live demo:** [stocksense-rangarohit.vercel.app](https://stocksense-rangarohit.vercel.app)
@@ -14,7 +14,7 @@ alerts, and a multi-agent AI pipeline that researches, debates, and executes sim
 - **Portfolio tracking** — real buy/sell transactions with cost basis and P&L, not paper-only
 - **Stock analysis** — price charts, company health scorecard, growth factors, analyst ratings, news feed
 - **Watchlist & alerts** — price moves, earnings, news, and analyst-rating alerts
-- **AI insights** — Claude-generated read on a stock, surfaced in the UI
+- **AI insights** — LLM-generated read on a stock, surfaced in the UI
 - **Auto-trader** — a page into the multi-agent trading pipeline's live signals and run history
 
 ## Multi-agent trading pipeline
@@ -36,8 +36,8 @@ data-agent → news-agent → bull-agent ↘
 - **execution-agent** — places (paper) trades
 - **monitor-agent** — tracks open positions against exit conditions
 
-Runs are logged to Postgres with per-agent token/cost accounting (Claude Haiku for cheap filtering,
-Claude Sonnet for the analysis-heavy steps).
+Runs are logged to Postgres with per-agent token/cost accounting (a lightweight model for cheap
+filtering, a larger model for the analysis-heavy steps).
 
 > The live demo runs the frontend only, reading from an already-seeded database — the scheduled
 > agent pipeline isn't running continuously online (avoids recurring inference/API costs for a demo).
@@ -66,8 +66,8 @@ Recharts / lightweight-charts, Framer Motion, AWS Amplify (Cognito)
 
 **Backend / data:** Node.js, PostgreSQL (AWS RDS), AWS Cognito, node-cron
 
-**External APIs:** Finnhub, Financial Modeling Prep, Anthropic Claude (Haiku for filtering, Sonnet
-for analysis)
+**External APIs:** Finnhub, Financial Modeling Prep, an LLM provider (lightweight model for
+filtering, larger model for analysis)
 
 **Infra:** AWS (RDS, Cognito, IAM, Secrets Manager), Vercel (frontend hosting)
 

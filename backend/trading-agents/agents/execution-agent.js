@@ -58,9 +58,9 @@ async function execute(signal, riskResult, pipelineRunId) {
 
     await db.query('COMMIT');
 
-    // 4. Robinhood paper trade (wire up credentials when ready)
+    // 4. Broker paper trade (wire up credentials when ready)
     if (!PAPER_TRADING) {
-      await placeRobinhoodOrder(signal, riskResult, positionId);
+      await placeBrokerOrder(signal, riskResult, positionId);
     }
 
     console.log(`[EXEC] ${signal.action} ${riskResult.shares.toFixed(2)} × ${signal.ticker} @ $${signal.entry_price} | SL $${riskResult.stopLossPrice.toFixed(2)} TP $${riskResult.takeProfitPrice.toFixed(2)}`);
@@ -97,11 +97,10 @@ async function logRejectedSignal(signal, rejectReason, pipelineRunId) {
   }
 }
 
-// Stub — wire up Robinhood API credentials and replace this
-async function placeRobinhoodOrder(signal, riskResult, positionId) {
-  // TODO: Implement Robinhood API integration
-  // POST https://api.robinhood.com/orders/
-  console.log('[ROBINHOOD] Order placement not yet configured. Running DB-only paper trade.');
+// Stub — wire up a brokerage API's credentials and replace this
+async function placeBrokerOrder(signal, riskResult, positionId) {
+  // TODO: Implement brokerage API integration
+  console.log('[BROKER] Order placement not yet configured. Running DB-only paper trade.');
 }
 
 module.exports = { execute, logRejectedSignal };

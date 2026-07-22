@@ -10,7 +10,7 @@
 
 ## 1. Executive Summary
 
-StockSense is a Robinhood-style web application for US stock market analysis, real portfolio
+StockSense is a modern web application for US stock market analysis, real portfolio
 tracking (buy/sell), and personalized alerts. Users get a clean dashboard showing their holdings,
 watchlist, financial health of companies, analyst ratings, news — and receive email notifications
 when important events happen on their tracked stocks.
@@ -29,7 +29,7 @@ Individual retail investors lack a unified, clean, and affordable tool that comb
 
 ## 3. Goals
 
-- Robinhood-style UI — clean, modern, dark/light mode
+- Clean, modern UI — dark/light mode
 - US market only (NYSE + NASDAQ) with 15-min delayed data
 - Actual buy/sell transaction tracking with cost basis and P&L
 - All 4 alert types: price, news, earnings, analyst upgrades
@@ -47,7 +47,7 @@ Individual retail investors lack a unified, clean, and affordable tool that comb
 - Options, futures, or crypto tracking
 
 > **Designed-in upgrade paths (not built in v1, but architected for):**
-> Payment plans via Stripe and AI stock analysis via Claude API.
+> Payment plans via Stripe and AI stock analysis via an LLM API.
 > The data model, middleware, and Lambda structure are built to support these from day 1.
 
 ---
@@ -321,7 +321,7 @@ CREATE TABLE subscriptions (
     updated_at          TIMESTAMP DEFAULT NOW()
 );
 
--- AI analysis cache — avoid re-calling Claude API for same stock same day
+-- AI analysis cache — avoid re-calling the LLM API for same stock same day
 CREATE TABLE ai_analysis_cache (
     ticker        VARCHAR(10) NOT NULL,
     analysis_text TEXT NOT NULL,
@@ -397,7 +397,7 @@ stock:analysts:{TICKER}       TTL: 6 hrs    (ratings, targets)
 stock:news:{TICKER}           TTL: 30 min   (news articles)
 stock:earnings:{TICKER}       TTL: 6 hrs    (earnings calendar)
 search:autocomplete:{query}   TTL: 1 hr     (search results)
-ai:analysis:{TICKER}          TTL: 6 hrs    (Claude AI analysis — Premium only)
+ai:analysis:{TICKER}          TTL: 6 hrs    (AI analysis — Premium only)
 user:plan:{USER_ID}           TTL: 5 min    (plan tier check — avoid DB hit per request)
 ```
 
@@ -418,7 +418,7 @@ user:plan:{USER_ID}           TTL: 5 min    (plan tier check — avoid DB hit pe
 | `alert-earnings-checker` | EventBridge 6hr | Upcoming earnings → SES |
 | `alert-analyst-checker` | EventBridge 1hr | Rating changes → SES |
 | `admin-stats` | API Gateway | User + cost + API stats |
-| `ai-analysis` | API Gateway | Claude API call → stock insight (Premium gate) |
+| `ai-analysis` | API Gateway | LLM API call → stock insight (Premium gate) |
 | `stripe-webhook` | API Gateway POST /webhooks/stripe | Handle payment events → update plan |
 | `create-checkout` | API Gateway | Create Stripe checkout session |
 | `manage-subscription` | API Gateway | Cancel / upgrade subscription |
@@ -636,26 +636,26 @@ Stripe → POST /webhooks/stripe (API Gateway)
          SES: send confirmation email
 ```
 
-### 14.3 AI Stock Analysis — Claude API Integration
+### 14.3 AI Stock Analysis — LLM API Integration
 
 When ready to add AI, the work is:
 
 ```
 Phase: AI Analysis (est. 3-4 days)
 
-1. Add Anthropic API key to Secrets Manager (already planned slot)
+1. Add LLM provider API key to Secrets Manager (already planned slot)
 2. Add Lambda: ai-analysis
    - Check Premium plan gate (already built)
    - Check Redis cache (ai:analysis:{TICKER})
    - If miss: fetch financials + news + analyst data
-   - Call Claude API with structured prompt
+   - Call LLM API with structured prompt
    - Cache result 6 hours
    - Store in ai_analysis_cache table
 3. Add "AI Insights" panel to /stock/:ticker page (hidden for Free/Pro)
 4. Add upgrade prompt when Free/Pro user clicks the AI panel
 
 Cost estimate per AI call:
-  - Claude Haiku: ~$0.001 per analysis (very cheap)
+  - Lightweight model: ~$0.001 per analysis (very cheap)
   - With 6-hour cache: ~4 calls/day per ticker
   - 100 premium users × 5 stocks/day = $2/day = ~$60/month
 ```
@@ -721,7 +721,7 @@ changes, **no Lambda refactors**, and **no frontend rewrites**:
 | Global markets | US only | Add Finnhub global when ready |
 | Mobile app | Web responsive | React Native later |
 | Paid plans / subscriptions | Architected, not built | 1 week of Stripe work |
-| AI stock analysis | Architected, not built | 3-4 days of Claude API work |
+| AI stock analysis | Architected, not built | 3-4 days of LLM API work |
 | Social features | Not in v1 | Future phase |
 | Options/crypto | Not in v1 | Future phase |
 
