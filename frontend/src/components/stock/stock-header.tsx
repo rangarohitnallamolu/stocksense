@@ -134,7 +134,7 @@ export function StockHeader(props: StockHeaderProps) {
       </div>
 
       {/* Stats row */}
-      <div className="grid grid-cols-4 gap-4 pt-4 border-t border-white/5">
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 pt-4 border-t border-white/5">
         <Stat label="Open"       value={`$${open.toFixed(2)}`} />
         <Stat label="Prev Close" value={`$${prevClose.toFixed(2)}`} />
         <Stat label="Day High"   value={`$${high.toFixed(2)}`} />

@@ -38,8 +38,8 @@ export function WatchlistTable({ items, onRemoved }: Props) {
 
   return (
     <div className="bg-[#111] border border-white/5 rounded-2xl overflow-hidden">
-      {/* Header */}
-      <div className="grid grid-cols-12 gap-2 px-5 py-3 border-b border-white/5 text-xs font-medium text-gray-500 uppercase tracking-wide">
+      {/* Header — desktop only */}
+      <div className="hidden md:grid grid-cols-12 gap-2 px-5 py-3 border-b border-white/5 text-xs font-medium text-gray-500 uppercase tracking-wide">
         <div className="col-span-3">Stock</div>
         <div className="col-span-2 text-right">Price</div>
         <div className="col-span-2 text-right">Change</div>
@@ -55,57 +55,94 @@ export function WatchlistTable({ items, onRemoved }: Props) {
             initial={{ opacity: 0, y: 6 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: i * 0.04 }}
-            className="grid grid-cols-12 gap-2 px-5 py-3 border-b border-white/5 last:border-0 hover:bg-white/2 transition-colors group items-center"
+            className="border-b border-white/5 last:border-0 hover:bg-white/2 transition-colors group"
           >
-            {/* Stock */}
-            <div className="col-span-3">
-              <div className="font-semibold text-white">{item.ticker}</div>
-              <div className="text-xs text-gray-500 mt-0.5">
-                Prev close ${item.prevClose.toFixed(2)}
+            {/* Desktop row */}
+            <div className="hidden md:grid grid-cols-12 gap-2 px-5 py-3 items-center">
+              {/* Stock */}
+              <div className="col-span-3">
+                <div className="font-semibold text-white">{item.ticker}</div>
+                <div className="text-xs text-gray-500 mt-0.5">
+                  Prev close ${item.prevClose.toFixed(2)}
+                </div>
+              </div>
+
+              {/* Price */}
+              <div className="col-span-2 text-right">
+                <div className="text-sm font-semibold text-white">${item.price.toFixed(2)}</div>
+              </div>
+
+              {/* Change */}
+              <div className="col-span-2 text-right">
+                <div className={`flex items-center justify-end gap-1 text-sm font-medium ${up ? 'text-green-400' : 'text-red-400'}`}>
+                  {up ? <TrendingUp size={12} /> : <TrendingDown size={12} />}
+                  {up ? '+' : ''}{item.change.toFixed(2)}
+                </div>
+                <div className={`text-xs ${up ? 'text-green-400' : 'text-red-400'}`}>
+                  {up ? '+' : ''}{item.changePct.toFixed(2)}%
+                </div>
+              </div>
+
+              {/* Intraday sparkline + H/L */}
+              <div className="col-span-3 flex items-center justify-end gap-2">
+                <div className="text-right flex-shrink-0">
+                  <div className="text-xs text-green-400 font-medium leading-tight">H ${item.high.toFixed(2)}</div>
+                  <div className="text-xs text-red-400 font-medium leading-tight mt-0.5">L ${item.low.toFixed(2)}</div>
+                </div>
+                <MiniSparkline ticker={item.ticker} isPositive={up} />
+              </div>
+
+              {/* Actions */}
+              <div className="col-span-2 flex items-center justify-end gap-2">
+                <button
+                  onClick={() => router.push(`/stock/${item.ticker}`)}
+                  className="p-1.5 text-gray-500 hover:text-white hover:bg-white/10 rounded-lg transition-all"
+                  title="View stock"
+                >
+                  <ExternalLink size={14} />
+                </button>
+                <button
+                  onClick={() => remove(item.ticker)}
+                  className="p-1.5 text-gray-600 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-all opacity-0 group-hover:opacity-100"
+                  title="Remove from watchlist"
+                >
+                  <Trash2 size={14} />
+                </button>
               </div>
             </div>
 
-            {/* Price */}
-            <div className="col-span-2 text-right">
-              <div className="text-sm font-semibold text-white">${item.price.toFixed(2)}</div>
-            </div>
-
-            {/* Change */}
-            <div className="col-span-2 text-right">
-              <div className={`flex items-center justify-end gap-1 text-sm font-medium ${up ? 'text-green-400' : 'text-red-400'}`}>
-                {up ? <TrendingUp size={12} /> : <TrendingDown size={12} />}
-                {up ? '+' : ''}{item.change.toFixed(2)}
+            {/* Mobile card */}
+            <div className="md:hidden px-4 py-3">
+              <div className="flex items-center justify-between gap-3">
+                <button
+                  onClick={() => router.push(`/stock/${item.ticker}`)}
+                  className="flex items-center gap-2.5 min-w-0 text-left flex-1"
+                >
+                  <MiniSparkline ticker={item.ticker} isPositive={up} />
+                  <div className="min-w-0">
+                    <div className="font-semibold text-white text-sm">{item.ticker}</div>
+                    <div className="text-xs text-gray-500">${item.price.toFixed(2)}</div>
+                  </div>
+                </button>
+                <div className="flex items-center gap-2 flex-shrink-0">
+                  <div className="text-right">
+                    <div className={`flex items-center justify-end gap-1 text-sm font-medium ${up ? 'text-green-400' : 'text-red-400'}`}>
+                      {up ? <TrendingUp size={11} /> : <TrendingDown size={11} />}
+                      {up ? '+' : ''}{item.changePct.toFixed(2)}%
+                    </div>
+                    <div className={`text-xs ${up ? 'text-green-400' : 'text-red-400'}`}>
+                      {up ? '+' : ''}{item.change.toFixed(2)}
+                    </div>
+                  </div>
+                  <button
+                    onClick={() => remove(item.ticker)}
+                    className="p-1.5 text-gray-600 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-all"
+                    title="Remove from watchlist"
+                  >
+                    <Trash2 size={14} />
+                  </button>
+                </div>
               </div>
-              <div className={`text-xs ${up ? 'text-green-400' : 'text-red-400'}`}>
-                {up ? '+' : ''}{item.changePct.toFixed(2)}%
-              </div>
-            </div>
-
-            {/* Intraday sparkline + H/L */}
-            <div className="col-span-3 flex items-center justify-end gap-2">
-              <div className="text-right flex-shrink-0">
-                <div className="text-xs text-green-400 font-medium leading-tight">H ${item.high.toFixed(2)}</div>
-                <div className="text-xs text-red-400 font-medium leading-tight mt-0.5">L ${item.low.toFixed(2)}</div>
-              </div>
-              <MiniSparkline ticker={item.ticker} isPositive={up} />
-            </div>
-
-            {/* Actions */}
-            <div className="col-span-2 flex items-center justify-end gap-2">
-              <button
-                onClick={() => router.push(`/stock/${item.ticker}`)}
-                className="p-1.5 text-gray-500 hover:text-white hover:bg-white/10 rounded-lg transition-all"
-                title="View stock"
-              >
-                <ExternalLink size={14} />
-              </button>
-              <button
-                onClick={() => remove(item.ticker)}
-                className="p-1.5 text-gray-600 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-all opacity-0 group-hover:opacity-100"
-                title="Remove from watchlist"
-              >
-                <Trash2 size={14} />
-              </button>
             </div>
           </motion.div>
         );

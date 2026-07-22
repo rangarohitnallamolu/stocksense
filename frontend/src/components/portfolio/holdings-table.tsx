@@ -84,8 +84,8 @@ export function HoldingsTable({ holdings, onAddTrade, onRefresh }: Props) {
 
   return (
     <div className="bg-[#111] border border-white/5 rounded-2xl overflow-hidden">
-      {/* Table header */}
-      <div className="grid grid-cols-12 gap-2 px-5 py-3 border-b border-white/5 text-xs font-medium text-gray-500 uppercase tracking-wide">
+      {/* Table header — desktop only */}
+      <div className="hidden md:grid grid-cols-12 gap-2 px-5 py-3 border-b border-white/5 text-xs font-medium text-gray-500 uppercase tracking-wide">
         <div className="col-span-3">Stock</div>
         <div className="col-span-1 text-right">Shares</div>
         <div className="col-span-2 text-right">Avg Cost</div>
@@ -101,9 +101,9 @@ export function HoldingsTable({ holdings, onAddTrade, onRefresh }: Props) {
 
         return (
           <div key={h.ticker} className="border-b border-white/5 last:border-0">
-            {/* Main row */}
+            {/* Main row — desktop grid */}
             <div
-              className="grid grid-cols-12 gap-2 px-5 py-4 hover:bg-white/2 cursor-pointer items-center transition-colors"
+              className="hidden md:grid grid-cols-12 gap-2 px-5 py-4 hover:bg-white/2 cursor-pointer items-center transition-colors"
               onClick={() => toggleExpand(h.ticker)}
             >
               {/* Stock */}
@@ -148,6 +148,31 @@ export function HoldingsTable({ holdings, onAddTrade, onRefresh }: Props) {
                 </div>
                 <div className={`text-xs ${up ? 'text-green-400' : 'text-red-400'}`}>
                   {fmtPct(Number(h.gain_pct))}
+                </div>
+              </div>
+            </div>
+
+            {/* Main row — mobile card */}
+            <div
+              className="md:hidden px-4 py-3.5 hover:bg-white/2 cursor-pointer transition-colors"
+              onClick={() => toggleExpand(h.ticker)}
+            >
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2.5 min-w-0">
+                  <ChevronDown size={14} className={`text-gray-500 transition-transform flex-shrink-0 ${isOpen ? 'rotate-180' : ''}`} />
+                  <div className="min-w-0">
+                    <div className="font-semibold text-white text-sm">{h.ticker}</div>
+                    <div className="text-xs text-gray-500">
+                      {Number(h.total_shares).toFixed(4).replace(/\.?0+$/, '')} sh @ ${fmt(Number(h.avg_cost))}
+                    </div>
+                  </div>
+                </div>
+                <div className="text-right flex-shrink-0">
+                  <div className="text-sm text-white font-medium">${Number(h.current_value).toFixed(2)}</div>
+                  <div className={`text-xs font-medium flex items-center justify-end gap-1 ${up ? 'text-green-400' : 'text-red-400'}`}>
+                    {up ? <TrendingUp size={10} /> : <TrendingDown size={10} />}
+                    {fmtDollar(Number(h.gain))} ({fmtPct(Number(h.gain_pct))})
+                  </div>
                 </div>
               </div>
             </div>
@@ -216,7 +241,7 @@ export function HoldingsTable({ holdings, onAddTrade, onRefresh }: Props) {
                               <button
                                 onClick={e => { e.stopPropagation(); deleteTxn(h.ticker, t.id); }}
                                 disabled={deletingId === t.id}
-                                className="opacity-0 group-hover:opacity-100 text-gray-600 hover:text-red-400 transition-all p-1 rounded disabled:opacity-30"
+                                className="opacity-100 md:opacity-0 md:group-hover:opacity-100 text-gray-600 hover:text-red-400 transition-all p-1 rounded disabled:opacity-30"
                               >
                                 <Trash2 size={13} />
                               </button>

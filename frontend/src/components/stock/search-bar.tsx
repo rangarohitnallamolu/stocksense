@@ -102,7 +102,7 @@ export function SearchBar({ className, onSelect }: SearchBarProps) {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 4 }}
             transition={{ duration: 0.15 }}
-            className="absolute top-full mt-2 left-0 right-0 bg-[#1a1a1a] border border-white/10 rounded-xl overflow-hidden shadow-2xl z-50 min-w-[280px]"
+            className="absolute top-full mt-2 right-0 bg-[#1a1a1a] border border-white/10 rounded-xl overflow-hidden shadow-2xl z-50 w-72 max-w-[calc(100vw-2rem)]"
           >
             {showPopular && (
               <div className="flex items-center gap-1.5 px-3 py-2 border-b border-white/5">

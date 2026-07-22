@@ -58,7 +58,7 @@ export default function AlertsPage() {
         </div>
 
         {/* Alert types info */}
-        <div className="grid grid-cols-3 gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
           {[
             { emoji: '📈', label: 'Price Alerts', desc: 'Above or below a price' },
             { emoji: '📰', label: 'News Alerts',  desc: 'Breaking news & earnings' },

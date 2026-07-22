@@ -366,7 +366,7 @@ export default function AiInsightsPage() {
                       ${(data?.tokenSummary.reduce((s,r) => s + Number(r.total_cost), 0) || 0).toFixed(4)}
                     </span>
                   </div>
-                  <div className="grid grid-cols-3 gap-2 pt-1">
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 pt-1">
                     {[
                       { label: 'Agent 1 per call', value: '$0.00051', sub: '25% cheaper than before', color: 'text-blue-400' },
                       { label: 'Agent 2 per ticker', value: '$0.00194', sub: '69% cheaper (batched ÷5)', color: 'text-purple-400' },
