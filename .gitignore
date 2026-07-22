@@ -1,0 +1,28 @@
+# local tooling config, not part of the app
+.claude/
+
+# dependencies
+node_modules/
+
+# env files — never commit real credentials
+.env
+.env.*
+!.env.example
+
+# next.js
+.next/
+out/
+
+# logs
+*.log
+npm-debug.log*
+
+# misc
+.DS_Store
+*.pem
+
+# vercel
+.vercel
+
+# typescript
+*.tsbuildinfo
